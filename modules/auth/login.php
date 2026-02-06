@@ -126,6 +126,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="btn btn-primary btn-lg">Login</button>
         </div>
     </form>
+    <div class="mt-4 text-center">
+        <div class="mb-2">
+            <a href="https://www.linkedin.com/in/thilinaadias" target="_blank" class="text-secondary mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+            <a href="https://github.com/thilinadias" target="_blank" class="text-secondary mx-2"><i class="fab fa-github fa-lg"></i></a>
+        </div>
+        <div class="text-muted" style="font-size: 0.75rem;">
+            All rights reserved &copy; <?php echo date('Y'); ?> | Garage System V3
+        </div>
+    </div>
 </div>
 
 </body>

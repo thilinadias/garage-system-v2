@@ -1,6 +1,10 @@
     </div> <!-- End Main Content -->
     <footer class="text-center py-3 border-top mt-auto bg-white print-hide">
         <div class="container">
+            <div class="mb-2">
+                <a href="https://www.linkedin.com/in/thilinaadias" target="_blank" class="text-secondary mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                <a href="https://github.com/thilinadias" target="_blank" class="text-secondary mx-2"><i class="fab fa-github fa-lg"></i></a>
+            </div>
             <span class="text-muted small">All rights reserved &copy; <?php echo date('Y'); ?> | Garage System V3</span>
         </div>
     </footer>
