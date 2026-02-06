@@ -24,7 +24,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/assets/uploads \
+RUN mkdir -p /var/www/html/assets/uploads/profiles \
+    && chown -R www-data:www-data /var/www/html/assets/uploads \
     && chmod -R 777 /var/www/html/assets/uploads
 
 # Expose port 80
