@@ -68,14 +68,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if($res) {
             $new_id = $pdo->lastInsertId();
             logAction($pdo, $_SESSION['user_id'], 'Added New Spare Part', 'inventory', $new_id, "Part: $part_name");
-        }
-
-        
-        // Log initial stock
-        if($res && $initial_stock > 0) {
-            $new_id = $pdo->lastInsertId();
-            $log = $pdo->prepare("INSERT INTO inventory_logs (part_id, change_qty, action_type, remarks) VALUES (:pid, :qty, 'added', 'Initial Stock')");
-            $log->execute(['pid' => $new_id, 'qty' => $initial_stock]);
+            
+            // Log initial stock
+            if($initial_stock > 0) {
+                $log = $pdo->prepare("INSERT INTO inventory_logs (part_id, change_qty, action_type, remarks) VALUES (:pid, :qty, 'added', 'Initial Stock')");
+                $log->execute(['pid' => $new_id, 'qty' => $initial_stock]);
+            }
         }
     }
 
