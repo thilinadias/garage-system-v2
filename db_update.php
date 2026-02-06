@@ -42,6 +42,14 @@ foreach ($tables as $name => $sql) {
     }
 }
 
+// Fix for missing AUTO_INCREMENT in bookings table
+try {
+    $pdo->exec("ALTER TABLE `bookings` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT");
+    echo "<p style='color:green;'>✅ AUTO_INCREMENT applied to 'bookings' table successfully.</p>";
+} catch (PDOException $e) {
+    echo "<p style='color:orange;'>⚠️ Caution on 'bookings' update: " . $e->getMessage() . "</p>";
+}
+
 echo "<h3>Update Complete!</h3>";
 echo "<p><a href='modules/dashboard/index.php'>Go to Dashboard</a></p>";
 ?>
