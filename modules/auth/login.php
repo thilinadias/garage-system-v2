@@ -87,11 +87,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="login-card">
     <div class="brand-logo">
         <?php 
-        $logo_path = $company['logo'] ?? '';
-        if(!empty($logo_path) && strpos($logo_path, 'assets/') === false) $logo_path = 'assets/uploads/' . $logo_path;
+        $logo_filename = basename($company['logo'] ?? '');
         ?>
-        <?php if(!empty($logo_path) && file_exists('../../' . $logo_path)): ?>
-            <img src="../../<?php echo htmlspecialchars($logo_path); ?>" alt="Company Logo">
+        <?php if(!empty($logo_filename)): ?>
+            <img src="/assets/uploads/<?php echo htmlspecialchars($logo_filename); ?>" alt="Company Logo">
         <?php endif; ?>
         <div class="brand-name"><?php echo htmlspecialchars($company['company_name'] ?? 'Garage Sys'); ?></div>
     </div>

@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="mb-3">
                                 <label class="form-label d-block">Company Logo</label>
                                 <?php if(isset($company['logo']) && $company['logo']): ?>
-                                    <img src="../../<?php echo $company['logo']; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
+                                    <img src="/assets/uploads/<?php echo basename($company['logo']); ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
                                 <?php else: ?>
                                     <img src="https://via.placeholder.com/150" class="img-thumbnail mb-2">
                                 <?php endif; ?>

@@ -113,9 +113,10 @@ require_once '../../includes/sidebar.php';
             <?php if(!empty($comp['logo'])): ?>
                 <?php 
                 $logo_path = $comp['logo'];
-                if(strpos($logo_path, 'assets/') === false) $logo_path = 'assets/uploads/' . $logo_path;
+                // Clean up any existing prefix to avoid duplication
+                $logo_filename = basename($logo_path);
                 ?>
-                <img src="../../<?php echo htmlspecialchars($logo_path); ?>" style="max-height: 80px;" class="mb-2">
+                <img src="/assets/uploads/<?php echo htmlspecialchars($logo_filename); ?>" style="max-height: 80px;" class="mb-2">
             <?php endif; ?>
             <h2 class="text-primary">INVOICE</h2>
             <strong>#<?php echo $inv['invoice_number']; ?></strong><br>
