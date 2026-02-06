@@ -219,12 +219,12 @@ $todays = $today_bookings->fetchAll();
                 <div class="row">
                     <div class="col-md-8">
                         <h5 class="fw-bold">Thilina Dias</h5>
-                        <p class="mb-2">Full Stack Engineer</p>
-                        <p class="small mb-0 opacity-75">Highly motivated to study new technologies and build robust digital solutions. Passionate about creating efficient systems like this Garage Management software.</p>
+                        <p class="mb-2">System Support Engineer | Bsc (Hons) Computer Networks</p>
+                        <p class="small mb-0 opacity-75">Dedicated IT professional with 5+ years of industry experience and a First Class Honors degree. Currently pursuing an Executive MSc in Information Security, with a passion for technological innovation and building efficient systems like this Garage Management software.</p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="https://github.com/thilinadias" target="_blank" class="btn btn-light btn-sm px-4 rounded-pill">
-                            <i class="fab fa-github me-2"></i> GitHub Profile
+                        <a href="https://thilinadias.github.io/portfolio/" target="_blank" class="btn btn-light btn-sm px-4 rounded-pill">
+                            <i class="fas fa-external-link-alt me-2"></i> View Portfolio
                         </a>
                         <div class="mt-3 small opacity-50">Based in Sri Lanka 🇱🇰</div>
                     </div>
