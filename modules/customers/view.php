@@ -153,8 +153,11 @@ require_once '../../includes/sidebar.php';
                             <td><?php echo $v['license_plate']; ?></td>
                             <td><?php echo $v['color']; ?></td>
                             <td>
-                                <!-- Delete could be added here -->
-                                <button class="btn btn-sm btn-outline-danger disabled"><i class="fas fa-trash"></i></button>
+                                <a href="delete_vehicle.php?id=<?php echo $v['id']; ?>&customer_id=<?php echo $id; ?>" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this vehicle? All related job history for this vehicle will also be removed.')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
