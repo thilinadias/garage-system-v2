@@ -1,7 +1,8 @@
 <?php
 require_once 'config/db.php';
 
-echo "<h2>Starting Database Update...</h2>";
+echo "<h2>Starting Database Update (v3.1 - Feb 6)...</h2>";
+echo "<p>Checking for critical schema fixes...</p>";
 
 $tables = [
     "invoice_items" => "CREATE TABLE `invoice_items` (
