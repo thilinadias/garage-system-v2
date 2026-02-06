@@ -112,9 +112,8 @@ require_once '../../includes/sidebar.php';
         <div class="col-4 text-end">
                 <?php 
                 $logo_filename = basename($comp['logo']);
-                $relative_path = "../../assets/uploads/" . $logo_filename;
-                if(!empty($logo_filename) && file_exists($relative_path)): ?>
-                    <img src="<?php echo $relative_path; ?>" style="max-height: 80px;" class="mb-2">
+                if(!empty($logo_filename)): ?>
+                    <img src="../../assets/uploads/<?php echo $logo_filename; ?>" style="max-height: 80px;" class="mb-2">
                 <?php endif; ?>
             <h2 class="text-primary">INVOICE</h2>
             <strong>#<?php echo $inv['invoice_number']; ?></strong><br>

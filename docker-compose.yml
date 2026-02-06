@@ -25,6 +25,8 @@ services:
       - DB_NAME=garage_sys
     depends_on:
       - db
+    volumes:
+      - gms_assets_data:/var/www/html/assets/uploads
     networks:
       - gms-network
 
@@ -34,3 +36,4 @@ networks:
 
 volumes:
   gms_db_data:
+  gms_assets_data:

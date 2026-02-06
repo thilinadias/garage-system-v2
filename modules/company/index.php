@@ -137,9 +137,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <label class="form-label d-block">Company Logo</label>
                                 <?php 
                                 $logo_filename = basename($company['logo'] ?? '');
-                                $logo_rel_path = "../../assets/uploads/" . $logo_filename;
-                                if(!empty($logo_filename) && file_exists($logo_rel_path)): ?>
-                                    <img src="<?php echo $logo_rel_path; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
+                                if(!empty($logo_filename)): ?>
+                                    <img src="../../assets/uploads/<?php echo $logo_filename; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
                                 <?php else: ?>
                                     <img src="https://via.placeholder.com/150" class="img-thumbnail mb-2">
                                 <?php endif; ?>
