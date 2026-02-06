@@ -1,6 +1,7 @@
 <?php
 require_once '../../includes/auth_check.php';
 require_once '../../config/db.php';
+require_once '../../includes/functions.php';
 
 checkRole(['admin']);
 
@@ -71,7 +72,6 @@ $booking_list = $bookings->fetchAll();
 
 require_once '../../includes/header.php';
 require_once '../../includes/sidebar.php';
-require_once '../../includes/functions.php';
 
 ?>
 
