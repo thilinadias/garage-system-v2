@@ -203,12 +203,12 @@ require_once '../../includes/sidebar.php';
                     
                     <div class="mb-3">
                         <label class="form-label">Issue Description</label>
-                        <textarea class="form-control bg-light" readonly rows="2"><?php echo htmlspecialchars($job['description']); ?></textarea>
+                        <textarea class="form-control bg-light" readonly rows="2"><?php echo htmlspecialchars($job['description'] ?? ''); ?></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Technician Notes</label>
-                        <textarea name="technician_notes" class="form-control" rows="3" placeholder="Enter findings, work done, etc."><?php echo htmlspecialchars($job['technician_notes']); ?></textarea>
+                        <textarea name="technician_notes" class="form-control" rows="3" placeholder="Enter findings, work done, etc."><?php echo htmlspecialchars($job['technician_notes'] ?? ''); ?></textarea>
                     </div>
 
                     <?php if($user_role == 'admin'): ?>
@@ -216,7 +216,7 @@ require_once '../../includes/sidebar.php';
                         <label class="form-label">Labor Cost</label>
                          <div class="input-group">
                             <span class="input-group-text">$</span>
-                            <input type="number" step="0.01" name="labor_cost" class="form-control" value="<?php echo $job['labor_cost']; ?>">
+                            <input type="number" step="0.01" name="labor_cost" class="form-control" value="<?php echo htmlspecialchars($job['labor_cost'] ?? '0.00'); ?>">
                         </div>
                     </div>
                     <?php endif; ?>

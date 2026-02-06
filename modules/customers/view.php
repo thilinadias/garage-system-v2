@@ -91,10 +91,10 @@ require_once '../../includes/sidebar.php';
                 <h5 class="mb-0">Details</h5>
             </div>
             <div class="card-body">
-                <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone']); ?></p>
-                <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email']); ?></p>
-                <p><strong>NIC:</strong> <?php echo htmlspecialchars($customer['nic']); ?></p>
-                <p><strong>Address:</strong> <?php echo htmlspecialchars($customer['address']); ?></p>
+                <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone'] ?? ''); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email'] ?? ''); ?></p>
+                <p><strong>NIC:</strong> <?php echo htmlspecialchars($customer['nic'] ?? ''); ?></p>
+                <p><strong>Address:</strong> <?php echo htmlspecialchars($customer['address'] ?? ''); ?></p>
                 <a href="edit.php?id=<?php echo $customer['id']; ?>" class="btn btn-outline-primary btn-sm w-100">Edit Details</a>
             </div>
         </div>
