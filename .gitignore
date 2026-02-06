@@ -1,5 +1,5 @@
 # XAMPP / Local Config
-config/db.php
+# config/db.php
 
 # Project Assets
 assets/uploads/*
