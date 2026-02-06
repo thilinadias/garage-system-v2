@@ -1,4 +1,9 @@
     </div> <!-- End Main Content -->
+    <footer class="text-center py-3 border-top mt-auto bg-white print-hide">
+        <div class="container">
+            <span class="text-muted small">All rights reserved &copy; <?php echo date('Y'); ?> | Garage System V3</span>
+        </div>
+    </footer>
 </div> <!-- End Flex Container -->
 
 <!-- Bootstrap 5 JS Bundle -->

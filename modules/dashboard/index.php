@@ -199,6 +199,41 @@ $todays = $today_bookings->fetchAll();
     </div>
 </div>
 
+<!-- About the Developer -->
+<div class="row mt-4 mb-5">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-code fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h4 class="mb-1">About the Developer</h4>
+                        <p class="mb-0 opacity-75">Meet the architect of this system</p>
+                    </div>
+                </div>
+                <hr class="bg-white opacity-25">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="fw-bold">Thilina Dias</h5>
+                        <p class="mb-2">Full Stack Engineer</p>
+                        <p class="small mb-0 opacity-75">Highly motivated to study new technologies and build robust digital solutions. Passionate about creating efficient systems like this Garage Management software.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="https://github.com/thilinadias" target="_blank" class="btn btn-light btn-sm px-4 rounded-pill">
+                            <i class="fab fa-github me-2"></i> GitHub Profile
+                        </a>
+                        <div class="mt-3 small opacity-50">Based in Sri Lanka 🇱🇰</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php require_once '../../includes/footer.php'; ?>
 
 <!-- FullCalendar -->
