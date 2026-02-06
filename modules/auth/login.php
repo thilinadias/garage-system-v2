@@ -88,9 +88,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="brand-logo">
         <?php 
         $logo_filename = basename($company['logo'] ?? '');
-        ?>
-        <?php if(!empty($logo_filename)): ?>
-            <img src="/assets/uploads/<?php echo htmlspecialchars($logo_filename); ?>" alt="Company Logo">
+        $logo_rel_path = "../../assets/uploads/" . $logo_filename;
+        if(!empty($logo_filename) && file_exists($logo_rel_path)): ?>
+            <img src="<?php echo $logo_rel_path; ?>" alt="Company Logo">
         <?php endif; ?>
         <div class="brand-name"><?php echo htmlspecialchars($company['company_name'] ?? 'Garage Sys'); ?></div>
     </div>

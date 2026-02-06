@@ -135,8 +135,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-md-4 text-center">
                             <div class="mb-3">
                                 <label class="form-label d-block">Company Logo</label>
-                                <?php if(isset($company['logo']) && $company['logo']): ?>
-                                    <img src="/assets/uploads/<?php echo basename($company['logo']); ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
+                                <?php 
+                                $logo_filename = basename($company['logo'] ?? '');
+                                $logo_rel_path = "../../assets/uploads/" . $logo_filename;
+                                if(!empty($logo_filename) && file_exists($logo_rel_path)): ?>
+                                    <img src="<?php echo $logo_rel_path; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
                                 <?php else: ?>
                                     <img src="https://via.placeholder.com/150" class="img-thumbnail mb-2">
                                 <?php endif; ?>
