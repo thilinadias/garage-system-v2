@@ -65,15 +65,6 @@ This is the fastest "one-click" method and is ideal for developers and productio
 
 ---
 
-## 📤 How to Upload to GitHub
-1.  **Create Repository**: Create a new repository on GitHub.
-2.  **Upload**: 
-    - Use the **Docker-ready** version for best compatibility.
-    - Drag and drop your project files (excluding the `.git` folder) into the GitHub upload window.
-3.  **Commit**: Add a message like "Initial release V2" and commit your changes.
-
----
-
 ## 🛠️ Features & Security
 - **Global Search**: Find anything via the top navbar.
 - **Booking & Calendar**: Manage appointments with an interactive dashboard.
