@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $target_file = $target_dir . $new_filename;
         
         if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_file)) {
-            $logo_path = $new_filename;
+            $logo_path = "assets/uploads/" . $new_filename;
         } else {
             $error = "Error uploading logo.";
         }
@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="mb-3">
                                 <label class="form-label d-block">Company Logo</label>
                                 <?php if(isset($company['logo']) && $company['logo']): ?>
-                                    <img src="../../assets/uploads/<?php echo $company['logo']; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
+                                    <img src="../../<?php echo $company['logo']; ?>" class="img-thumbnail mb-2" style="max-height: 150px;">
                                 <?php else: ?>
                                     <img src="https://via.placeholder.com/150" class="img-thumbnail mb-2">
                                 <?php endif; ?>

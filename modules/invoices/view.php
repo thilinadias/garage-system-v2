@@ -43,6 +43,46 @@ require_once '../../includes/header.php';
 require_once '../../includes/sidebar.php';
 ?>
 
+<style>
+@media print {
+    /* Hide all elements except the print area */
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    
+    /* Position the print area at the very top of the page */
+    #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Hide browser headers/footers */
+    @page {
+        size: auto;
+        margin: 0;
+    }
+
+    #print-area {
+        padding: 20mm !important;
+    }
+
+    .print-hide { display: none !important; }
+    
+    /* Ensure clean background and fonts */
+    body { background: white !important; }
+    .card { border: none !important; }
+    .table-light { background-color: #f8f9fa !important; -webkit-print-color-adjust: exact; }
+    .text-primary { color: #0d6efd !important; -webkit-print-color-adjust: exact; }
+    .badge { border: 1px solid #ddd !important; -webkit-print-color-adjust: exact; }
+}
+</style>
+
 
 <div class="mb-3 print-hide d-flex justify-content-between">
     <a href="index.php" class="btn btn-secondary">Back to List</a>
@@ -71,7 +111,11 @@ require_once '../../includes/sidebar.php';
         </div>
         <div class="col-4 text-end">
             <?php if(!empty($comp['logo'])): ?>
-                <img src="../../assets/uploads/<?php echo $comp['logo']; ?>" style="max-height: 80px;" class="mb-2">
+                <?php 
+                $logo_path = $comp['logo'];
+                if(strpos($logo_path, 'assets/') === false) $logo_path = 'assets/uploads/' . $logo_path;
+                ?>
+                <img src="../../<?php echo htmlspecialchars($logo_path); ?>" style="max-height: 80px;" class="mb-2">
             <?php endif; ?>
             <h2 class="text-primary">INVOICE</h2>
             <strong>#<?php echo $inv['invoice_number']; ?></strong><br>
