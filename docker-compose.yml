@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.6
+    container_name: gms-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: garage_sys
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - gms_db_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - gms-network
+
+  web:
+    build: .
+    container_name: gms-web
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=garage_sys
+    depends_on:
+      - db
+    networks:
+      - gms-network
+
+networks:
+  gms-network:
+    driver: bridge
+
+volumes:
+  gms_db_data:

@@ -1,0 +1,14 @@
+# XAMPP / Local Config
+config/db.php
+
+# Project Assets
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Database Dumps
+*.sql
+!database.sql
