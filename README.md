@@ -12,7 +12,7 @@ Professional garage management solution with advanced tracking, reporting, and b
 
 
 ## ✨ Version 3.1 Major Update (Current)
-- **Personalized Developer Branding**: New "About the Developer" section on the dashboard showcasing Thilina Dias's professional profile.
+
 - **Social Integration**: LinkedIn and GitHub icons added to the Dashboard and Login screens for a professional presence.
 - **Persistent Data Storage**: Docker configuration now includes persistent volumes for `assets/uploads`, ensuring logos and photos survive container updates.
 - **Dynamic Footer**: Global footer with automatic copyright year updating and professional branding.
