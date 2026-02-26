@@ -87,7 +87,7 @@ $user_role = $_SESSION['role'] ?? 'technician'; // Default to technician if not 
     </div>
 </div>
 <!-- Main Content Wrapper -->
-<div class="flex-grow-1">
+<div class="d-flex flex-column flex-grow-1 min-vh-100">
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom px-4 print-hide">
         <div class="container-fluid">
@@ -109,4 +109,4 @@ $user_role = $_SESSION['role'] ?? 'technician'; // Default to technician if not 
             </div>
         </div>
     </nav>
-    <div class="main-content">
+    <div class="main-content flex-grow-1">

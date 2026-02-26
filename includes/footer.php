@@ -1,5 +1,5 @@
     </div> <!-- End Main Content -->
-    <footer class="text-center py-3 border-top mt-auto bg-white print-hide">
+    <footer class="text-center py-3 border-top mt-auto print-hide" style="background-color: var(--card-bg); color: var(--text-color);">
         <div class="container">
             <div class="mb-2">
                 <a href="https://www.linkedin.com/in/thilinaadias" target="_blank" class="text-secondary mx-2"><i class="fab fa-linkedin fa-lg"></i></a>

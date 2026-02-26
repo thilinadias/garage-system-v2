@@ -10,66 +10,148 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+        :root {
+            /* Light Theme Variables */
+            --bg-color: #f4f7fa;
+            --text-color: #2c3e50;
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #cbd5e1;
+            --sidebar-hover: #334155;
+            --card-bg: #ffffff;
+            --card-border: rgba(0,0,0,0.05);
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --primary-color: #2563eb;
+            --nav-bg: #ffffff;
         }
+
+        body.bg-dark {
+            /* Dark Theme Variables */
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --sidebar-bg: #020617;
+            --sidebar-text: #94a3b8;
+            --sidebar-hover: #1e293b;
+            --card-bg: #1e293b;
+            --card-border: rgba(255,255,255,0.05);
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --primary-color: #3b82f6;
+            --nav-bg: #1e293b;
+            
+            background-color: var(--bg-color) !important;
+            color: var(--text-color) !important;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Sidebar Styling */
         .sidebar {
-            min-height: 100vh;
-            background-color: #343a40;
+            background-color: var(--sidebar-bg) !important;
             color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
         .sidebar a {
-            color: #adb5bd;
+            color: var(--sidebar-text);
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 12px 20px;
             display: block;
+            border-radius: 8px;
+            margin: 4px 10px;
+            transition: all 0.2s ease;
         }
         .sidebar a:hover, .sidebar a.active {
-            background-color: #495057;
+            background-color: var(--sidebar-hover);
             color: white;
+            transform: translateX(4px);
         }
         .sidebar .brand {
             font-size: 1.5rem;
-            font-weight: bold;
-            padding: 20px;
+            font-weight: 700;
+            padding: 24px 20px;
             text-align: center;
-            border-bottom: 1px solid #495057;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.5px;
+            margin: 0;
+            border-radius: 0;
         }
+        .sidebar .brand:hover {
+            transform: none;
+            background-color: transparent;
+        }
+
+        /* Layout & Components */
         .main-content {
-            padding: 20px;
+            padding: 24px;
         }
         .card {
-            border: none;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            margin-bottom: 20px;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s, color 0.3s;
         }
-        .navbar-custom {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+            border-radius: 12px 12px 0 0 !important;
         }
         
-        /* Dark Mode Overrides */
-        body.bg-dark {
-            background-color: #212529 !important;
-            color: #f8f9fa !important;
+        /* Navbar */
+        .navbar-custom {
+            background-color: var(--nav-bg) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border-bottom: 1px solid var(--card-border);
         }
-        body.bg-dark .card {
-            background-color: #343a40;
-            color: #f8f9fa;
+        
+        /* Buttons & Inputs */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
-        body.bg-dark .navbar-custom {
-            background-color: #343a40;
-            border-bottom: 1px solid #495057;
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-         body.bg-dark .table {
-            color: #f8f9fa;
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-         body.bg-dark .form-control, body.bg-dark .form-select {
-            background-color: #495057;
-            border-color: #6c757d;
-            color: white;
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+        }
+
+        /* Dark Mode Overrides for Components */
+        body.bg-dark .form-control, 
+        body.bg-dark .form-select {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+        body.bg-dark .form-control:focus, 
+        body.bg-dark .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+        body.bg-dark .table {
+            color: var(--text-color);
+        }
+        body.bg-dark .text-muted {
+            color: #94a3b8 !important;
+        }
+        body.bg-dark .card-header.bg-light,
+        body.bg-dark .bg-light {
+            background-color: #0f172a !important;
         }
         /* Global Print Styles */
         @media print {
@@ -84,5 +166,5 @@
     </style>
 </head>
 <body>
-    <div class="d-flex">
+    <div class="d-flex min-vh-100">
         <!-- Sidebar will be included here -->

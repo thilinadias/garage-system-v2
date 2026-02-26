@@ -2,6 +2,7 @@
 require_once '../../includes/auth_check.php';
 require_once '../../config/db.php';
 require_once '../../includes/functions.php';
+require_once '../../includes/notifications.php';
 
 $error = '';
 $success = '';
@@ -33,6 +34,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($res) {
             $booking_id = $pdo->lastInsertId();
             logAction($pdo, $_SESSION['user_id'], 'Create Booking', 'bookings', $booking_id, "Booking $booking_number created.");
+
+            // Fetch Customer Email
+            $cust_stmt = $pdo->prepare("SELECT email, name FROM customers WHERE id = :cid");
+            $cust_stmt->execute(['cid' => $customer_id]);
+            $cust = $cust_stmt->fetch();
+
+            if ($cust && !empty($cust['email'])) {
+                $subject = "Booking Confirmation: " . $booking_number;
+                $message = "<h2>Hello {$cust['name']},</h2>
+                            <p>Thank you for choosing our garage! Your booking has been confirmed.</p>
+                            <ul>
+                                <li><strong>Booking Reference:</strong> $booking_number</li>
+                                <li><strong>Date:</strong> $booking_date</li>
+                                <li><strong>Time:</strong> $booking_time</li>
+                            </ul>
+                            <p>If you have any questions, feel free to contact us.</p>
+                            <br>
+                            <p>Best Regards,</p>
+                            <p>The Garage Team</p>";
+                sendEmailNotification($cust['email'], $subject, $message);
+            }
+
             header("Location: index.php?success=Booking created successfully.");
             exit;
         }

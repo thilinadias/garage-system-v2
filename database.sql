@@ -425,4 +425,26 @@ ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`vehicle_id`) REFERENCES `customer_vehicles` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_3` FOREIGN KEY (`technician_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
+--
+-- Default Data for `vehicle_brands` and `vehicle_models`
+--
+INSERT INTO `vehicle_brands` (`id`, `name`) VALUES
+(1, 'Toyota'), (2, 'Honda'), (3, 'Ford'), (4, 'Chevrolet'), 
+(5, 'Nissan'), (6, 'Hyundai'), (7, 'Kia'), (8, 'Volkswagen'), 
+(9, 'BMW'), (10, 'Mercedes-Benz'), (11, 'Audi'), (12, 'Subaru');
+
+INSERT INTO `vehicle_models` (`brand_id`, `name`) VALUES
+(1, 'Corolla'), (1, 'Camry'), (1, 'RAV4'), (1, 'Hilux'), (1, 'Prius'),
+(2, 'Civic'), (2, 'Accord'), (2, 'CR-V'), (2, 'Fit'), (2, 'HR-V'),
+(3, 'F-150'), (3, 'Mustang'), (3, 'Escape'), (3, 'Explorer'), (3, 'Focus'),
+(4, 'Silverado'), (4, 'Equinox'), (4, 'Malibu'), (4, 'Tahoe'), (4, 'Cruze'),
+(5, 'Altima'), (5, 'Sentra'), (5, 'Rogue'), (5, 'Pathfinder'), (5, 'Navara'),
+(6, 'Elantra'), (6, 'Sonata'), (6, 'Tucson'), (6, 'Santa Fe'), (6, 'Kona'),
+(7, 'Forte'), (7, 'Optima'), (7, 'Sportage'), (7, 'Sorento'), (7, 'Soul'),
+(8, 'Golf'), (8, 'Jetta'), (8, 'Passat'), (8, 'Tiguan'), (8, 'Polo'),
+(9, '3 Series'), (9, '5 Series'), (9, 'X3'), (9, 'X5'), (9, 'M3'),
+(10, 'C-Class'), (10, 'E-Class'), (10, 'GLC'), (10, 'GLE'), (10, 'S-Class'),
+(11, 'A3'), (11, 'A4'), (11, 'Q5'), (11, 'Q7'), (11, 'A6'),
+(12, 'Outback'), (12, 'Forester'), (12, 'Crosstrek'), (12, 'Impreza'), (12, 'WRX');
+
 COMMIT;

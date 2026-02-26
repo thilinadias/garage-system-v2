@@ -2,6 +2,7 @@
 require_once '../../includes/auth_check.php';
 require_once '../../config/db.php';
 require_once '../../includes/functions.php';
+require_once '../../includes/notifications.php';
 
 
 $id = $_GET['id'] ?? null;
@@ -11,7 +12,7 @@ $user_role = $_SESSION['role'];
 $user_id = $_SESSION['user_id'];
 
 // Fetch Job Details initially for logic
-$stmt = $pdo->prepare("SELECT j.*, c.name as customer_name, c.phone, vm.name as vehicle_model, cv.license_plate, u.name as tech_name, u.avatar as tech_avatar 
+$stmt = $pdo->prepare("SELECT j.*, c.name as customer_name, c.email as customer_email, c.phone, vm.name as vehicle_model, cv.license_plate, u.name as tech_name, u.avatar as tech_avatar 
                        FROM job_cards j 
                        JOIN customers c ON j.customer_id = c.id 
                        JOIN customer_vehicles cv ON j.vehicle_id = cv.id 
@@ -44,6 +45,21 @@ if(isset($_POST['update_job'])) {
     $upd = $pdo->prepare($sql);
     if($upd->execute(['st' => $status, 'notes' => $notes, 'lc' => $labor, 'tid' => $tech_id, 'ca' => $completed_at, 'id' => $id])) {
         logAction($pdo, $user_id, 'Updated Job Details', 'job_cards', $id, "Status: $status");
+
+        // If status changed to Completed, send Service End email
+        if ($status == 'Completed' && $job['status'] != 'Completed' && !empty($job['customer_email'])) {
+            $subject = "Service Completed: Your Vehicle is Ready!";
+            $message = "<h2>Hello {$job['customer_name']},</h2>
+                        <p>Great news! The service for your vehicle (<strong>{$job['vehicle_model']} - {$job['license_plate']}</strong>) has been completed.</p>
+                        <p><strong>Job Number:</strong> {$job['job_number']}</p>
+                        <p><strong>Mechanic Notes:</strong> " . nl2br(htmlspecialchars($notes)) . "</p>
+                        <p>Please feel free to drop by the garage to pick up your vehicle.</p>
+                        <br>
+                        <p>Best Regards,</p>
+                        <p>The Garage Team</p>";
+            sendEmailNotification($job['customer_email'], $subject, $message);
+        }
+
         header("Location: view.php?id=$id&msg=updated");
         exit;
     }

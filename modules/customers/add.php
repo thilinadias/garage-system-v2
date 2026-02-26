@@ -6,6 +6,7 @@ require_once '../../includes/sidebar.php';
 
 checkRole(['admin']);
 require_once '../../includes/functions.php';
+require_once '../../includes/notifications.php';
 
 
 $error = '';
@@ -24,6 +25,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if($stmt->execute(['name' => $name, 'phone' => $phone, 'email' => $email, 'address' => $address, 'nic' => $nic])) {
              $new_id = $pdo->lastInsertId();
              logAction($pdo, $_SESSION['user_id'], 'Added New Customer', 'customers', $new_id, "Customer: $name");
+
+             // Send Welcome Email if email exists
+             if (!empty($email)) {
+                 $subject = "Welcome to Our Garage System!";
+                 $message = "<h2>Hello $name,</h2>
+                             <p>Welcome to our Garage Management System. Your customer profile has been created successfully.</p>
+                             <p>You will now receive notifications regarding your appointments and vehicle service status via this email.</p>
+                             <br>
+                             <p>Best Regards,</p>
+                             <p>The Garage Team</p>";
+                 sendEmailNotification($email, $subject, $message);
+             }
+
              echo "<script>window.location='index.php';</script>";
              exit;
         }
