@@ -42,6 +42,21 @@ require_once '../../includes/sidebar.php';
     <?php endif; ?>
 </div>
 
+<?php if(isset($_GET['msg']) && $_GET['msg'] == 'offer_sent'): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i> Promotional offer broadcasted successfully! 
+        <strong>(<?php echo htmlspecialchars($_GET['success'] ?? 0); ?> sent, <?php echo htmlspecialchars($_GET['failed'] ?? 0); ?> failed)</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if(isset($_GET['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <form action="" method="get" class="mb-4">
@@ -86,9 +101,15 @@ require_once '../../includes/sidebar.php';
                             <?php endif; ?>
                         </td>
                         <?php if($_SESSION['role'] == 'admin'): ?>
-                        <td class="text-end">
-                            <a href="edit.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            <a href="delete.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this service?');"><i class="fas fa-trash"></i></a>
+                        <td class="text-end text-nowrap">
+                            <?php if ($price_calc['is_discounted']): ?>
+                                <form action="send_offer.php" method="POST" class="d-inline" onsubmit="return confirm('Broadcast this offer to ALL customers via email? \n\nNote: This process may take a minute depending on your customer volume.');">
+                                    <input type="hidden" name="service_id" value="<?php echo $s['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Broadcast Offer"><i class="fas fa-envelope"></i></button>
+                                </form>
+                            <?php endif; ?>
+                            <a href="edit.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a href="delete.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this service?');"><i class="fas fa-trash"></i></a>
                         </td>
                         <?php endif; ?>
                     </tr>
