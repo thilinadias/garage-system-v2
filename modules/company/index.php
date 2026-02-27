@@ -20,6 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $tax_percentage = $_POST['tax_percentage'];
     $currency_symbol = trim($_POST['currency_symbol']);
+    $report_email = trim($_POST['report_email']);
+    $daily_report_time = $_POST['daily_report_time'];
     
     // Handle File Upload
     $logo_path = $company['logo'] ?? null;
@@ -42,14 +44,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(!$error) {
         if($company) {
             // Update
-            $sql = "UPDATE company_profile SET company_name=:name, address=:address, phone=:phone, email=:email, logo=:logo, tax_percentage=:tax, currency_symbol=:currency WHERE id=:id";
+            $sql = "UPDATE company_profile SET company_name=:name, address=:address, phone=:phone, email=:email, logo=:logo, tax_percentage=:tax, currency_symbol=:currency, report_email=:report_email, daily_report_time=:report_time WHERE id=:id";
             $stmt = $pdo->prepare($sql);
-            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'id' => $company['id']]);
+            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time, 'id' => $company['id']]);
         } else {
             // Insert
-            $sql = "INSERT INTO company_profile (company_name, address, phone, email, logo, tax_percentage, currency_symbol) VALUES (:name, :address, :phone, :email, :logo, :tax, :currency)";
+            $sql = "INSERT INTO company_profile (company_name, address, phone, email, logo, tax_percentage, currency_symbol, report_email, daily_report_time) VALUES (:name, :address, :phone, :email, :logo, :tax, :currency, :report_email, :report_time)";
             $stmt = $pdo->prepare($sql);
-            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol]);
+            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time]);
         }
         
         if($res) {
@@ -128,6 +130,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <div class="mb-3">
                                         <label class="form-label">Default Tax Percentage (%)</label>
                                         <input type="number" step="0.01" name="tax_percentage" class="form-control" value="<?php echo htmlspecialchars($company['tax_percentage'] ?? '0.00'); ?>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Automated Reports Settings -->
+                            <h5 class="mt-4 border-bottom pb-2 text-primary"><i class="fas fa-chart-line me-2"></i> Automated Reports Settings</h5>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Target Email Address for Reports</label>
+                                        <input type="email" name="report_email" class="form-control" value="<?php echo htmlspecialchars($company['report_email'] ?? ''); ?>" placeholder="admin@example.com">
+                                        <small class="text-muted">Daily & Monthly reports will be sent here.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Daily Reporting Time</label>
+                                        <input type="time" name="daily_report_time" class="form-control" value="<?php echo htmlspecialchars($company['daily_report_time'] ?? '18:00'); ?>">
+                                        <small class="text-muted">When the daily summary should be generated.</small>
                                     </div>
                                 </div>
                             </div>

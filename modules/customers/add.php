@@ -28,14 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
              // Send Welcome Email if email exists
              if (!empty($email)) {
-                 $subject = "Welcome to Our Garage System!";
-                 $message = "<h2>Hello $name,</h2>
-                             <p>Welcome to our Garage Management System. Your customer profile has been created successfully.</p>
-                             <p>You will now receive notifications regarding your appointments and vehicle service status via this email.</p>
-                             <br>
-                             <p>Best Regards,</p>
-                             <p>The Garage Team</p>";
-                 sendEmailNotification($email, $subject, $message);
+                 sendWelcomeEmail($email, $name);
              }
 
              echo "<script>window.location='index.php';</script>";

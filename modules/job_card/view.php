@@ -48,16 +48,7 @@ if(isset($_POST['update_job'])) {
 
         // If status changed to Completed, send Service End email
         if ($status == 'Completed' && $job['status'] != 'Completed' && !empty($job['customer_email'])) {
-            $subject = "Service Completed: Your Vehicle is Ready!";
-            $message = "<h2>Hello {$job['customer_name']},</h2>
-                        <p>Great news! The service for your vehicle (<strong>{$job['vehicle_model']} - {$job['license_plate']}</strong>) has been completed.</p>
-                        <p><strong>Job Number:</strong> {$job['job_number']}</p>
-                        <p><strong>Mechanic Notes:</strong> " . nl2br(htmlspecialchars($notes)) . "</p>
-                        <p>Please feel free to drop by the garage to pick up your vehicle.</p>
-                        <br>
-                        <p>Best Regards,</p>
-                        <p>The Garage Team</p>";
-            sendEmailNotification($job['customer_email'], $subject, $message);
+            sendServiceEndEmail($job['customer_email'], $job['customer_name'], $job['job_number'], $notes);
         }
 
         header("Location: view.php?id=$id&msg=updated");

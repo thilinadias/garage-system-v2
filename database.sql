@@ -45,8 +45,39 @@ CREATE TABLE `company_profile` (
   `email` varchar(100) NOT NULL,
   `logo` varchar(255) DEFAULT NULL,
   `currency_symbol` varchar(10) DEFAULT '$',
-  `tax_percentage` decimal(5,2) DEFAULT 0.00
+  `tax_percentage` decimal(5,2) DEFAULT 0.00,
+  `report_email` varchar(100) DEFAULT NULL,
+  `daily_report_time` time DEFAULT '18:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `email_settings`
+--
+
+CREATE TABLE `email_settings` (
+  `id` int(11) NOT NULL,
+  `smtp_host` varchar(255) DEFAULT 'smtp.gmail.com',
+  `smtp_username` varchar(100) DEFAULT '',
+  `smtp_password` varchar(255) DEFAULT '',
+  `smtp_port` int(11) DEFAULT 587,
+  `smtp_secure` enum('tls','ssl') DEFAULT 'tls',
+  `from_email` varchar(100) DEFAULT '',
+  `from_name` varchar(100) DEFAULT 'Garage System',
+  `welcome_subject` varchar(255) DEFAULT 'Welcome to our Garage!',
+  `welcome_body` text,
+  `booking_subject` varchar(255) DEFAULT 'Your Booking Confirmation',
+  `booking_body` text,
+  `service_end_subject` varchar(255) DEFAULT 'Your Vehicle is Ready!',
+  `service_end_body` text,
+  `email_logo` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `email_settings`
+--
+INSERT INTO `email_settings` (`id`) VALUES (1);
 
 -- --------------------------------------------------------
 
@@ -249,6 +280,12 @@ ALTER TABLE `company_profile`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `email_settings`
+--
+ALTER TABLE `email_settings`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `vehicle_brands`
 --
 ALTER TABLE `vehicle_brands`
@@ -349,6 +386,9 @@ ALTER TABLE `users`
 
 ALTER TABLE `company_profile`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `email_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 ALTER TABLE `vehicle_brands`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

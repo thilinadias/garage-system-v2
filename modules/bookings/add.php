@@ -41,19 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $cust = $cust_stmt->fetch();
 
             if ($cust && !empty($cust['email'])) {
-                $subject = "Booking Confirmation: " . $booking_number;
-                $message = "<h2>Hello {$cust['name']},</h2>
-                            <p>Thank you for choosing our garage! Your booking has been confirmed.</p>
-                            <ul>
-                                <li><strong>Booking Reference:</strong> $booking_number</li>
-                                <li><strong>Date:</strong> $booking_date</li>
-                                <li><strong>Time:</strong> $booking_time</li>
-                            </ul>
-                            <p>If you have any questions, feel free to contact us.</p>
-                            <br>
-                            <p>Best Regards,</p>
-                            <p>The Garage Team</p>";
-                sendEmailNotification($cust['email'], $subject, $message);
+                sendBookingEmail($cust['email'], $cust['name'], $booking_number, $booking_date, $booking_time);
             }
 
             header("Location: index.php?success=Booking created successfully.");
