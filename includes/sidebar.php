@@ -20,13 +20,13 @@ $user_role = $_SESSION['role'] ?? 'technician'; // Default to technician if not 
                 <i class="fas fa-clipboard-list me-2"></i> Job Cards
             </a>
         </li>
+        
+        <?php if ($user_role === 'admin'): ?>
         <li>
             <a href="../../modules/bookings/index.php" class="nav-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'bookings') !== false) ? 'active' : ''; ?>">
                 <i class="fas fa-calendar-alt me-2"></i> Bookings
             </a>
         </li>
-        
-        <?php if ($user_role === 'admin'): ?>
         <li>
             <a href="../../modules/customers/index.php" class="nav-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'customers') !== false) ? 'active' : ''; ?>">
                 <i class="fas fa-users me-2"></i> Customers

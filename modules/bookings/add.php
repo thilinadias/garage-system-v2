@@ -1,6 +1,9 @@
 <?php
 require_once '../../includes/auth_check.php';
 require_once '../../config/db.php';
+
+checkRole(['admin']);
+
 require_once '../../includes/functions.php';
 require_once '../../includes/notifications.php';
 
