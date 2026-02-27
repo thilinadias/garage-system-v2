@@ -6,6 +6,8 @@ Professional garage management solution with advanced tracking, reporting, and b
 
 ## ✨ Version 3.2 Major Update (Current)
 - **Email Notifications**: Integrated PHPMailer to automatically dispatch emails to customers upon profile creation, booking scheduling, and service completion.
+- **Dynamic Email GUI**: Admins can configure SMTP credentials, upload custom email header logos, and edit all automated HTML email templates directly from the web settings panel.
+- **Automated Reporting Engine**: A new cron-ready reporting script automatically calculates Daily Revenue/Jobs and active Technician allocations, along with a Monthly Sales summary, emailing them directly to the admin.
 - **Premium UI Redesign**: Modernized the Bootstrap 5 interface with a new custom color palette, smooth shadows, rounded input corners, and richer Dark Mode colors.
 - **Fixed Layout Footer**: The structural layout has been upgraded to a strict Flexbox Column, ensuring the footer stays permanently pinned to the bottom of the screen regardless of content height.
 - **Default Vehicle Seeding**: The core database script now comes pre-loaded with an extensive list of the most popular global vehicle brands (Toyota, Honda, Ford, etc.) and models for immediate use on fresh installs.
