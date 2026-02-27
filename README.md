@@ -74,6 +74,27 @@ This is the fastest "one-click" method and is ideal for developers and productio
 
 ---
 
+### Automated Reports Setup (Cron Job)
+To enable the **Automated Daily and Monthly Reports**, you must configure your server's scheduler to execute the reporting script (`includes/cron_reports.php`) regularly.
+
+**On Linux Servers (Recommended Method):**
+1. Open your terminal and type `crontab -e`.
+2. Add the following rule to execute the script at the top of every hour (adjust `/var/www/html` to your exact directory path):
+   ```bash
+   0 * * * * php /var/www/html/garage-system-v2/includes/cron_reports.php >> /var/log/garage_cron.log 2>&1
+   ```
+   *The script will automatically check the database for your preferred "Daily Reporting Time" and only send the email when the hour matches.*
+
+**On Windows Servers (XAMPP):**
+1. Open **Task Scheduler** from the start menu.
+2. Click **Create Basic Task** and name it "Garage Reports".
+3. Set the trigger to **Daily** and select the exact time you configured in the application's Company Profile.
+4. Set the Action to **Start a program**.
+5. Program/script: Browse to your PHP executable (e.g., `C:\xampp\php\php.exe`).
+6. Add arguments: `C:\xampp\htdocs\garage-system-v2\includes\cron_reports.php`.
+
+---
+
 ## 🛠️ Features & Security
 - **Global Search**: Find anything via the top navbar.
 - **Booking & Calendar**: Manage appointments with an interactive dashboard.
