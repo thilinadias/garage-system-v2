@@ -89,7 +89,7 @@ if ($current_hour === $target_hour) {
         $daily_html .= "<p>No active jobs currently in progress.</p>";
     }
 
-    if(_dispatchEmail($report_email, $daily_subject, $daily_html)){
+    if(_dispatchEmail($report_email, $daily_subject, $daily_html, true)){
         echo "Daily Report sent to $report_email.\n";
     } else {
         echo "Failed to send Daily Report.\n";
@@ -129,7 +129,7 @@ if ($current_date === $last_day_of_month && $current_hour === $target_hour) {
     
     $monthly_html .= "<br><p>Log in to the Garage System dashboard for a complete breakdown of sales, inventory usage, and technician performance.</p>";
 
-    if(_dispatchEmail($report_email, $monthly_subject, $monthly_html)){
+    if(_dispatchEmail($report_email, $monthly_subject, $monthly_html, true)){
         echo "Monthly Report sent to $report_email.\n";
     } else {
         echo "Failed to send Monthly Report.\n";

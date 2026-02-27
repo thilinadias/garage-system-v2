@@ -8,9 +8,9 @@ checkRole(['admin']);
 $id = $_GET['id'] ?? null;
 if($id) {
     try {
-        $stmt = $pdo->prepare("DELETE FROM bookings WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE bookings SET status = 'Cancelled' WHERE id = ?");
         $stmt->execute([$id]);
-        logAction($pdo, $_SESSION['user_id'], 'Delete Booking', 'bookings', $id, "Booking ID $id deleted.");
+        logAction($pdo, $_SESSION['user_id'], 'Cancel Booking', 'bookings', $id, "Booking ID $id status changed to Cancelled.");
     } catch (PDOException $e) {
         // Handle error
     }

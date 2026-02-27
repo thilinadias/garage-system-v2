@@ -10,25 +10,21 @@ use PHPMailer\PHPMailer\Exception;
 /**
  * Helper function to wrap message in a branded HTML template
  */
-function _buildEmailBody($settings, $message_content) {
+function _buildEmailBody($settings, $message_content, $logo_cid = null, $is_html_block = false) {
     $logo_html = '';
-    if (!empty($settings['email_logo'])) {
-        // We assume the script is sending from the root domain level or we use absolute URL if configured.
-        // For simplicity, we just reference the path. In a real system you'd use a BASE_URL.
-        // But many email clients block relative images. We will try to attach it or use a web url if BASE_URL existed.
-        // To be safe for local dev, we just put an img tag. 
-        // We'll use a placeholder for $base_url
-        $base_url = "http://" . $_SERVER['HTTP_HOST'] . "/garage-system-v2/";
+    if ($logo_cid) {
         $logo_html = '<div style="text-align: center; margin-bottom: 20px;">
-                        <img src="'.$base_url.$settings['email_logo'].'" alt="Logo" style="max-height: 80px;">
+                        <img src="cid:'.$logo_cid.'" alt="Logo" style="max-height: 80px;">
                       </div>';
     }
+
+    $body_content = $is_html_block ? $message_content : nl2br($message_content);
 
     return '
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
         ' . $logo_html . '
         <div style="line-height: 1.6;">
-            ' . nl2br($message_content) . '
+            ' . $body_content . '
         </div>
         <div style="margin-top: 30px; font-size: 12px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 10px;">
             This is an automated notification. Please do not reply directly.
@@ -39,7 +35,7 @@ function _buildEmailBody($settings, $message_content) {
 /**
  * Base email dispatcher
  */
-function _dispatchEmail($to_email, $subject, $message) {
+function _dispatchEmail($to_email, $subject, $message, $is_html_block = false) {
     global $pdo;
     
     // Validate email
@@ -72,7 +68,18 @@ function _dispatchEmail($to_email, $subject, $message) {
 
         $mail->isHTML(true);
         $mail->Subject = $subject;
-        $mail->Body    = _buildEmailBody($settings, $message);
+        
+        // Handle Embedded Logo (CID)
+        $logo_cid = null;
+        if (!empty($settings['email_logo'])) {
+            $logo_path = __DIR__ . '/../' . $settings['email_logo'];
+            if (file_exists($logo_path)) {
+                $logo_cid = 'logo_' . md5(uniqid());
+                $mail->addEmbeddedImage($logo_path, $logo_cid, 'logo.png');
+            }
+        }
+
+        $mail->Body    = _buildEmailBody($settings, $message, $logo_cid, $is_html_block);
         $mail->AltBody = strip_tags($message);
 
         $mail->send();
