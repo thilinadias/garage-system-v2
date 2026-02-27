@@ -297,7 +297,22 @@ CREATE TABLE `job_card_services` (
   `original_price_snapshot` decimal(10,2) NOT NULL,
   `final_price_charged` decimal(10,2) NOT NULL,
   `offer_applied_snapshot` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_card_photos`
+--
+
+CREATE TABLE `job_card_photos` (
+  `id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `photo_path` varchar(255) NOT NULL,
+  `caption` varchar(255) DEFAULT NULL,
+  `uploaded_by` int(11) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -424,6 +439,14 @@ ALTER TABLE `job_card_services`
   ADD KEY `service_id` (`service_id`);
 
 --
+-- Indexes for table `job_card_photos`
+--
+ALTER TABLE `job_card_photos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `job_id` (`job_id`),
+  ADD KEY `uploaded_by` (`uploaded_by`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -478,6 +501,9 @@ ALTER TABLE `services`
 ALTER TABLE `job_card_services`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `job_card_photos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- Constraints for dumped tables
 --
@@ -520,6 +546,10 @@ ALTER TABLE `bookings`
 ALTER TABLE `job_card_services`
   ADD CONSTRAINT `job_card_services_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `job_cards` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `job_card_services_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`);
+
+ALTER TABLE `job_card_photos`
+  ADD CONSTRAINT `job_card_photos_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `job_cards` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_card_photos_ibfk_2` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`);
 
 --
 -- Default Data for `vehicle_brands` and `vehicle_models`

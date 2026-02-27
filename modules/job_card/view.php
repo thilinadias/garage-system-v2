@@ -158,6 +158,57 @@ if(isset($_GET['delete_part'])) {
     }
 }
 
+// Handle Photo Upload
+if(isset($_POST['upload_photo'])) {
+    if(isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+        $caption = trim($_POST['caption']);
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        $filename = $_FILES['photo']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if(in_array($ext, $allowed)) {
+            $new_name = 'job_' . $id . '_' . time() . '.' . $ext;
+            $upload_dir = '../../assets/uploads/job_photos/';
+            
+            if(move_uploaded_file($_FILES['photo']['tmp_name'], $upload_dir . $new_name)) {
+                $ins = $pdo->prepare("INSERT INTO job_card_photos (job_id, photo_path, caption, uploaded_by) VALUES (:jid, :path, :cap, :uby)");
+                $ins->execute(['jid' => $id, 'path' => $new_name, 'cap' => $caption, 'uby' => $user_id]);
+                
+                logAction($pdo, $user_id, 'Uploaded Job Photo', 'job_card_photos', $pdo->lastInsertId(), "Photo: $new_name, Job: {$job['job_number']}");
+                header("Location: view.php?id=$id&msg=photo_uploaded");
+                exit;
+            } else {
+                $error = "Failed to move uploaded file.";
+            }
+        } else {
+            $error = "Invalid file type. Only JPG, PNG, and GIF are allowed.";
+        }
+    } else {
+        $error = "No file uploaded or an upload error occurred.";
+    }
+}
+
+// Handle Photo Delete
+if(isset($_GET['delete_photo'])) {
+    $row_id = $_GET['delete_photo'];
+    $chk = $pdo->prepare("SELECT * FROM job_card_photos WHERE id = :id AND job_id = :jid");
+    $chk->execute(['id' => $row_id, 'jid' => $id]);
+    $photo = $chk->fetch();
+    
+    if($photo) {
+        $filepath = '../../assets/uploads/job_photos/' . $photo['photo_path'];
+        if(file_exists($filepath)) {
+            unlink($filepath);
+        }
+        $del = $pdo->prepare("DELETE FROM job_card_photos WHERE id = :id");
+        $del->execute(['id' => $row_id]);
+        
+        logAction($pdo, $user_id, 'Deleted Job Photo', 'job_card_photos', $row_id, "Job: {$job['job_number']}");
+        header("Location: view.php?id=$id&msg=photo_deleted");
+        exit;
+    }
+}
+
 // Fetch Job Services
 $srv_stmt = $pdo->prepare("SELECT * FROM job_card_services WHERE job_id = :id");
 $srv_stmt->execute(['id' => $id]);
@@ -167,6 +218,22 @@ $job_services = $srv_stmt->fetchAll();
 $parts_stmt = $pdo->prepare("SELECT jcp.*, i.part_name, i.part_number FROM job_card_parts jcp JOIN inventory i ON jcp.part_id = i.id WHERE jcp.job_id = :id");
 $parts_stmt->execute(['id' => $id]);
 $job_parts = $parts_stmt->fetchAll();
+
+// Fetch Job Photos
+$photo_stmt = $pdo->prepare("SELECT p.*, u.name as tech_name FROM job_card_photos p JOIN users u ON p.uploaded_by = u.id WHERE p.job_id = :id ORDER BY p.uploaded_at DESC");
+$photo_stmt->execute(['id' => $id]);
+$job_photos = $photo_stmt->fetchAll();
+
+// Fetch Vehicle History Photos
+$vh_photo_stmt = $pdo->prepare("
+    SELECT p.*, j.job_number, j.created_at as job_date 
+    FROM job_card_photos p 
+    JOIN job_cards j ON p.job_id = j.id 
+    WHERE j.vehicle_id = :vid AND j.id != :jid 
+    ORDER BY p.uploaded_at DESC
+");
+$vh_photo_stmt->execute(['vid' => $job['vehicle_id'], 'jid' => $id]);
+$history_photos = $vh_photo_stmt->fetchAll();
 
 // Fetch Inventory for dropdown
 $inv_list = $pdo->query("SELECT id, part_name, stock_quantity, unit_price FROM inventory WHERE stock_quantity > 0 ORDER BY part_name")->fetchAll();
@@ -424,6 +491,67 @@ require_once '../../includes/sidebar.php';
                 </form>
             </div>
         </div>
+        <!-- Job Photos -->
+        <div class="card mb-4 print-hide">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Current Job Photos</h5>
+            </div>
+            <div class="card-body bg-light">
+                <div class="row g-3 mb-3">
+                    <?php foreach($job_photos as $p): ?>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card h-100 shadow-sm border-0 position-relative">
+                                <a href="?id=<?php echo $id; ?>&delete_photo=<?php echo $p['id']; ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" style="z-index: 10;" onclick="return confirm('Delete this photo permanently?')"><i class="fas fa-trash"></i></a>
+                                <a href="../../assets/uploads/job_photos/<?php echo $p['photo_path']; ?>" target="_blank">
+                                    <img src="../../assets/uploads/job_photos/<?php echo $p['photo_path']; ?>" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Job Photo">
+                                </a>
+                                <div class="card-body p-2 text-center">
+                                    <small class="d-block text-muted text-truncate" title="<?php echo htmlspecialchars($p['caption']); ?>"><?php echo htmlspecialchars($p['caption'] ?: 'No Caption'); ?></small>
+                                    <small class="text-primary" style="font-size: 0.75rem;">By <?php echo htmlspecialchars($p['tech_name']); ?></small>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if(empty($job_photos)) echo "<div class='col-12 text-center text-muted'>No photos attached to this job yet.</div>"; ?>
+                </div>
+
+                <hr>
+                <h6><i class="fas fa-camera text-secondary me-2"></i> Upload Photo</h6>
+                <form action="" method="post" enctype="multipart/form-data" class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <input type="file" name="photo" class="form-control form-control-sm" accept="image/jpeg, image/png, image/gif" required>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" name="caption" class="form-control form-control-sm" placeholder="Add a short caption...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" name="upload_photo" class="btn btn-sm btn-outline-dark w-100"><i class="fas fa-upload me-1"></i> Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Vehicle History Gallery -->
+        <div class="card mb-4 print-hide">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i> Vehicle Photo History</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2" style="max-height: 400px; overflow-y: auto;">
+                    <?php foreach($history_photos as $hp): ?>
+                        <div class="col-md-3 col-sm-4 text-center">
+                            <a href="../../assets/uploads/job_photos/<?php echo $hp['photo_path']; ?>" target="_blank" class="d-block mb-1">
+                                <img src="../../assets/uploads/job_photos/<?php echo $hp['photo_path']; ?>" class="img-thumbnail" style="width: 100%; height: 100px; object-fit: cover;" alt="History">
+                            </a>
+                            <small class="d-block text-muted" style="font-size: 0.7rem;">Job: <a href="view.php?id=<?php echo $hp['job_id']; ?>"><?php echo $hp['job_number']; ?></a></small>
+                            <small class="d-block text-truncate" style="font-size: 0.7rem;"><?php echo htmlspecialchars($hp['caption'] ?: '-'); ?></small>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if(empty($history_photos)) echo "<div class='col-12 text-center text-muted p-3'>No previous photos found for this vehicle.</div>"; ?>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Summary Sidebar -->
