@@ -20,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $tax_percentage = $_POST['tax_percentage'];
     $currency_symbol = trim($_POST['currency_symbol']);
-    $report_email = trim($_POST['report_email']);
-    $daily_report_time = $_POST['daily_report_time'];
-    $timezone = trim($_POST['timezone']);
+    $report_email = trim($_POST['report_email'] ?? '');
+    $daily_report_time = $_POST['daily_report_time'] ?? '18:00';
+    $timezone = trim($_POST['timezone'] ?? 'Asia/Colombo');
     
     // Handle File Upload
     $logo_path = $company['logo'] ?? null;
