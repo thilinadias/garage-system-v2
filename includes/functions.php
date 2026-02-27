@@ -78,4 +78,48 @@ function getPagination($total_records, $records_per_page, $current_page, $url) {
     $html .= '</ul></nav>';
     return $html;
 }
+
+/**
+ * Calculate final service price based on any active offers
+ * Takes an array representing a database row from the `services` table.
+ */
+function calculateServicePrice($service) {
+    $original = (float)$service['original_price'];
+    
+    // Default return payload
+    $result = [
+        'is_discounted' => false,
+        'original_price' => $original,
+        'final_price' => $original,
+        'offer_text' => null
+    ];
+
+    // Check if there is an active offer conceptually
+    if (!empty($service['offer_name']) && !empty($service['offer_discount_type']) && !empty($service['offer_discount_value'])) {
+        $today = date('Y-m-d');
+        // Validate date if set
+        if (empty($service['offer_end_date']) || $service['offer_end_date'] >= $today) {
+            
+            $discount_val = (float)$service['offer_discount_value'];
+            $final = $original;
+            
+            if ($service['offer_discount_type'] == 'fixed') {
+                $final = $original - $discount_val;
+            } elseif ($service['offer_discount_type'] == 'percentage') {
+                $final = $original - ($original * ($discount_val / 100));
+            }
+            
+            // Cannot be negative
+            if ($final < 0) $final = 0;
+            
+            $result['is_discounted'] = true;
+            $result['final_price'] = $final;
+            
+            $type_str = ($service['offer_discount_type'] == 'percentage') ? $discount_val . '%' : '$' . $discount_val; // Raw formatting, UI will handle currency
+            $result['offer_text'] = $service['offer_name'] . " (-" . $type_str . ")";
+        }
+    }
+    
+    return $result;
+}
 ?>

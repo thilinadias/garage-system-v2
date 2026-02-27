@@ -57,6 +57,36 @@ if(isset($_POST['update_job'])) {
 
 }
 
+// Handle Add Service
+if(isset($_POST['add_service'])) {
+    $service_id = $_POST['service_id'];
+    
+    // Fetch the service details
+    $chk = $pdo->prepare("SELECT * FROM services WHERE id = :id");
+    $chk->execute(['id' => $service_id]);
+    $service_data = $chk->fetch();
+    
+    if($service_data) {
+        $price_calc = calculateServicePrice($service_data);
+        
+        $ins = $pdo->prepare("INSERT INTO job_card_services 
+                              (job_id, service_id, service_name_snapshot, original_price_snapshot, final_price_charged, offer_applied_snapshot) 
+                              VALUES (:jid, :sid, :sname, :oprice, :fprice, :offer)");
+        $ins->execute([
+            'jid' => $id,
+            'sid' => $service_id,
+            'sname' => $service_data['name'],
+            'oprice' => $price_calc['original_price'],
+            'fprice' => $price_calc['final_price'],
+            'offer' => $price_calc['offer_text']
+        ]);
+        
+        logAction($pdo, $user_id, 'Added Service to Job', 'job_card_services', $pdo->lastInsertId(), "Service: {$service_data['name']}, Job: {$job['job_number']}");
+        header("Location: view.php?id=$id&msg=service_added");
+        exit;
+    }
+}
+
 // Handle Add Part
 if(isset($_POST['add_part'])) {
     $part_id = $_POST['part_id'];
@@ -87,6 +117,23 @@ if(isset($_POST['add_part'])) {
     }
 }
 
+// Handle Delete Service
+if(isset($_GET['delete_service'])) {
+    $row_id = $_GET['delete_service'];
+    
+    // Validate it belongs to this job
+    $chk = $pdo->prepare("SELECT id FROM job_card_services WHERE id = :id AND job_id = :jid");
+    $chk->execute(['id' => $row_id, 'jid' => $id]);
+    if($chk->fetch()) {
+        $del = $pdo->prepare("DELETE FROM job_card_services WHERE id = :id");
+        $del->execute(['id' => $row_id]);
+        
+        logAction($pdo, $user_id, 'Removed Service from Job', 'job_card_services', $row_id, "Job: {$job['job_number']}");
+        header("Location: view.php?id=$id&msg=service_removed");
+        exit;
+    }
+}
+
 // Handle Delete Part
 if(isset($_GET['delete_part'])) {
     $row_id = $_GET['delete_part'];
@@ -111,6 +158,11 @@ if(isset($_GET['delete_part'])) {
     }
 }
 
+// Fetch Job Services
+$srv_stmt = $pdo->prepare("SELECT * FROM job_card_services WHERE job_id = :id");
+$srv_stmt->execute(['id' => $id]);
+$job_services = $srv_stmt->fetchAll();
+
 // Fetch Job Parts
 $parts_stmt = $pdo->prepare("SELECT jcp.*, i.part_name, i.part_number FROM job_card_parts jcp JOIN inventory i ON jcp.part_id = i.id WHERE jcp.job_id = :id");
 $parts_stmt->execute(['id' => $id]);
@@ -119,11 +171,18 @@ $job_parts = $parts_stmt->fetchAll();
 // Fetch Inventory for dropdown
 $inv_list = $pdo->query("SELECT id, part_name, stock_quantity, unit_price FROM inventory WHERE stock_quantity > 0 ORDER BY part_name")->fetchAll();
 
+// Fetch Available Services for dropdown
+$sys_services_list = $pdo->query("SELECT * FROM services ORDER BY name")->fetchAll();
+
 // Calculate Totals
+$total_services = 0;
+foreach($job_services as $js) { $total_services += $js['final_price_charged']; }
+
 $total_parts = 0;
 foreach($job_parts as $jp) { $total_parts += ($jp['quantity'] * $jp['unit_price']); }
+
 $total_labor = $job['labor_cost'];
-$grand_total = $total_parts + $total_labor;
+$grand_total = $total_services + $total_parts + $total_labor;
 
 // Fetch Technicians for Admin
 if($user_role == 'admin') {
@@ -235,6 +294,76 @@ require_once '../../includes/sidebar.php';
             </div>
         </div>
 
+        <!-- Services Rendered -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Services Rendered</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Original Price</th>
+                            <th>Applied Offer</th>
+                            <th>Final Charge</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($job_services as $js): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($js['service_name_snapshot']); ?></td>
+                            <td><?php echo formatCurrency($pdo, $js['original_price_snapshot']); ?></td>
+                            <td>
+                                <?php if($js['offer_applied_snapshot']): ?>
+                                    <span class="badge bg-warning text-dark"><i class="fas fa-tag"></i> <?php echo htmlspecialchars($js['offer_applied_snapshot']); ?></span>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><strong><?php echo formatCurrency($pdo, $js['final_price_charged']); ?></strong></td>
+                            <td>
+                                <a href="?id=<?php echo $id; ?>&delete_service=<?php echo $js['id']; ?>" class="text-danger" onclick="return confirm('Remove service from job?')"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if(empty($job_services)) echo "<tr><td colspan='5' class='text-center'>No services added yet.</td></tr>"; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Services Total:</strong></td>
+                            <td><strong><?php echo formatCurrency($pdo, $total_services); ?></strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Add Service Form -->
+                <hr>
+                <h6>Add Service</h6>
+                <form action="" method="post" class="row g-2">
+                    <div class="col-md-10">
+                        <select name="service_id" class="form-select" required>
+                            <option value="">Select Pre-Defined Service</option>
+                             <?php foreach($sys_services_list as $sl): 
+                                 $sl_calc = calculateServicePrice($sl);
+                             ?>
+                                <option value="<?php echo $sl['id']; ?>">
+                                    <?php echo htmlspecialchars($sl['name']); ?> 
+                                    (<?php echo formatCurrency($pdo, $sl_calc['final_price'], ""); ?>)
+                                    <?php echo $sl_calc['is_discounted'] ? " - " . $sl_calc['offer_text'] : ""; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" name="add_service" class="btn btn-outline-primary w-100">Add Service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Parts Used -->
         <div class="card">
             <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
@@ -306,6 +435,10 @@ require_once '../../includes/sidebar.php';
                 <div class="d-flex justify-content-between mb-2">
                     <span>Labor Cost:</span>
                     <span><?php echo formatCurrency($pdo, $job['labor_cost']); ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Services:</span>
+                    <span><?php echo formatCurrency($pdo, $total_services); ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Spare Parts:</span>

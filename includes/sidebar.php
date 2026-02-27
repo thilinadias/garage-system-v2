@@ -43,6 +43,11 @@ $user_role = $_SESSION['role'] ?? 'technician'; // Default to technician if not 
             </a>
         </li>
         <li>
+            <a href="../../modules/services/index.php" class="nav-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'services') !== false) ? 'active' : ''; ?>">
+                <i class="fas fa-hand-holding-medical me-2"></i> Services
+            </a>
+        </li>
+        <li>
             <a href="../../modules/invoices/index.php" class="nav-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'invoices') !== false) ? 'active' : ''; ?>">
                 <i class="fas fa-file-invoice-dollar me-2"></i> Invoices
             </a>

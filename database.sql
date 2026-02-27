@@ -265,6 +265,39 @@ CREATE TABLE `bookings` (
     `description` TEXT,
     `status` ENUM('Pending', 'Confirmed', 'Cancelled', 'Completed') DEFAULT 'Pending',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `description` text DEFAULT NULL,
+  `original_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `offer_name` varchar(100) DEFAULT NULL,
+  `offer_discount_type` enum('fixed','percentage') DEFAULT NULL,
+  `offer_discount_value` decimal(10,2) DEFAULT NULL,
+  `offer_end_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_card_services`
+--
+
+CREATE TABLE `job_card_services` (
+  `id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `service_name_snapshot` varchar(150) NOT NULL,
+  `original_price_snapshot` decimal(10,2) NOT NULL,
+  `final_price_charged` decimal(10,2) NOT NULL,
+  `offer_applied_snapshot` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -376,7 +409,19 @@ ALTER TABLE `bookings`
   ADD UNIQUE KEY `booking_number` (`booking_number`),
   ADD KEY `customer_id` (`customer_id`),
   ADD KEY `vehicle_id` (`vehicle_id`),
-  ADD KEY `technician_id` (`technician_id`);
+--
+-- Indexes for table `services`
+--
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `job_card_services`
+--
+ALTER TABLE `job_card_services`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `job_id` (`job_id`),
+  ADD KEY `service_id` (`service_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -427,6 +472,12 @@ ALTER TABLE `audit_logs`
 ALTER TABLE `bookings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `services`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `job_card_services`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- Constraints for dumped tables
 --
@@ -465,6 +516,10 @@ ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`vehicle_id`) REFERENCES `customer_vehicles` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_3` FOREIGN KEY (`technician_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `job_card_services`
+  ADD CONSTRAINT `job_card_services_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `job_cards` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_card_services_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`);
 
 --
 -- Default Data for `vehicle_brands` and `vehicle_models`

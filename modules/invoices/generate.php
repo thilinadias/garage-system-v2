@@ -40,15 +40,24 @@ $parts = $pdo->prepare("SELECT jcp.*, i.part_name FROM job_card_parts jcp JOIN i
 $parts->execute(['id' => $job_id]);
 $job_parts = $parts->fetchAll();
 
+// Fetch Services
+$services = $pdo->prepare("SELECT * FROM job_card_services WHERE job_id = :id");
+$services->execute(['id' => $job_id]);
+$job_services = $services->fetchAll();
+
 // Fetch Company Tax %
 $comp = $pdo->query("SELECT tax_percentage FROM company_profile LIMIT 1")->fetch();
 $tax_percent = $comp['tax_percentage'] ?? 0;
 
 // Calculate Totals
+$services_total = 0;
+foreach($job_services as $js) { $services_total += $js['final_price_charged']; }
+
 $parts_total = 0;
 foreach($job_parts as $jp) { $parts_total += ($jp['quantity'] * $jp['unit_price']); }
+
 $labor_total = $job['labor_cost'];
-$subtotal = $parts_total + $labor_total;
+$subtotal = $services_total + $parts_total + $labor_total;
 $tax_amount = $subtotal * ($tax_percent / 100);
 $total_amount = $subtotal + $tax_amount;
 
@@ -75,12 +84,24 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $inv_id = $pdo->lastInsertId();
         
         // Add Items (Freezing history)
-        // 1. Labor
         $item_sql = "INSERT INTO invoice_items (invoice_id, description, amount) VALUES (:iid, :desc, :amt)";
         $item_stmt = $pdo->prepare($item_sql);
-        $item_stmt->execute(['iid' => $inv_id, 'desc' => "Labor Charges", 'amt' => $labor_total]);
         
-        // 2. Parts
+        // 1. Labor
+        if ($labor_total > 0) {
+            $item_stmt->execute(['iid' => $inv_id, 'desc' => "Labor Charges", 'amt' => $labor_total]);
+        }
+        
+        // 2. Services
+        foreach($job_services as $js) {
+             $desc = $js['service_name_snapshot'];
+             if (!empty($js['offer_applied_snapshot'])) {
+                 $desc .= " [Offer Applied: " . $js['offer_applied_snapshot'] . "]";
+             }
+             $item_stmt->execute(['iid' => $inv_id, 'desc' => $desc, 'amt' => $js['final_price_charged']]);
+        }
+        
+        // 3. Parts
         foreach($job_parts as $jp) {
              $desc = $jp['part_name'] . " x" . $jp['quantity'];
              $amt = $jp['quantity'] * $jp['unit_price'];
@@ -124,6 +145,18 @@ require_once '../../includes/sidebar.php';
                             <td>Labor Charges</td>
                             <td class="text-end"><?php echo formatCurrency($pdo, $labor_total); ?></td>
                         </tr>
+                        <!-- Services -->
+                        <?php foreach($job_services as $js): ?>
+                        <tr>
+                            <td>
+                                <?php echo htmlspecialchars($js['service_name_snapshot']); ?>
+                                <?php if($js['offer_applied_snapshot']): ?>
+                                    <br><small class="text-warning"><i class="fas fa-tag"></i> <?php echo htmlspecialchars($js['offer_applied_snapshot']); ?></small>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-end"><?php echo formatCurrency($pdo, $js['final_price_charged']); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
                         <!-- Parts -->
                         <?php foreach($job_parts as $jp): ?>
                         <tr>
