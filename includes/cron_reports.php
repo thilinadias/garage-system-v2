@@ -22,21 +22,32 @@ $current_date = date('Y-m-d');
 $current_time = date('H:i');
 $current_hour = (int)date('H');
 
-// Get designated daily report hour (e.g., "18" from "18:00:00")
+// Get designated daily report hour (e.g., "14" from "14:30:00")
 $target_time = $company['daily_report_time'] ?? '18:00:00';
-$target_hour = (int)explode(':', $target_time)[0];
+$target_timestamp = strtotime($current_date . ' ' . $target_time);
+$target_hour = (int)date('H', $target_timestamp);
+$target_minute = (int)date('i', $target_timestamp);
+
+// Determine if we should run:
+// 1. If hour matches (good for "every hour" cron jobs).
+// 2. Or if current time is within +/- 5 minutes of the target time (good for Windows specific task scheduling).
+$current_timestamp = time();
+$time_diff_minutes = abs($current_timestamp - $target_timestamp) / 60;
+
+$should_run = false;
+if ($current_hour === $target_hour || $time_diff_minutes <= 5) {
+    $should_run = true;
+}
 
 // Logging
-echo "[".date('Y-m-d H:i:s')."] Cron Triggered. Target Hour: $target_hour. Current Hour: $current_hour.\n";
+echo "[".date('Y-m-d H:i:s')."] Cron Triggered.\n";
+echo "Target Scheduled Time: $target_time\n";
+echo "Current Server Time: ".date('H:i:s')."\n";
 
 // ==========================================
 // 1. DAILY REPORT LOGIC
 // ==========================================
-// We only run the daily report if the current hour matches the target hour.
-// To prevent multiple sends if cron runs every 10 mins, in a robust system 
-// we would track "last_sent" in DB. For simplicity, assume cron runs once per hour.
-
-if ($current_hour === $target_hour) {
+if ($should_run) {
     echo "Time matched! Generating Daily Report...\n";
     
     // Total Sales Today
@@ -99,9 +110,8 @@ if ($current_hour === $target_hour) {
 // ==========================================
 // 2. MONTHLY REPORT LOGIC
 // ==========================================
-// We run the monthly report on the LAST day of the month, at the same target hour.
 $last_day_of_month = date('Y-m-t'); // 't' gives the last day of the current month
-if ($current_date === $last_day_of_month && $current_hour === $target_hour) {
+if ($current_date === $last_day_of_month && $should_run) {
     echo "Last day of month! Generating Monthly Report...\n";
     
     $current_month = date('Y-m');
