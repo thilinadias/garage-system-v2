@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $currency_symbol = trim($_POST['currency_symbol']);
     $report_email = trim($_POST['report_email']);
     $daily_report_time = $_POST['daily_report_time'];
+    $timezone = trim($_POST['timezone']);
     
     // Handle File Upload
     $logo_path = $company['logo'] ?? null;
@@ -44,14 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(!$error) {
         if($company) {
             // Update
-            $sql = "UPDATE company_profile SET company_name=:name, address=:address, phone=:phone, email=:email, logo=:logo, tax_percentage=:tax, currency_symbol=:currency, report_email=:report_email, daily_report_time=:report_time WHERE id=:id";
+            $sql = "UPDATE company_profile SET company_name=:name, address=:address, phone=:phone, email=:email, logo=:logo, tax_percentage=:tax, currency_symbol=:currency, report_email=:report_email, daily_report_time=:report_time, timezone=:timezone WHERE id=:id";
             $stmt = $pdo->prepare($sql);
-            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time, 'id' => $company['id']]);
+            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time, 'timezone' => $timezone, 'id' => $company['id']]);
         } else {
             // Insert
-            $sql = "INSERT INTO company_profile (company_name, address, phone, email, logo, tax_percentage, currency_symbol, report_email, daily_report_time) VALUES (:name, :address, :phone, :email, :logo, :tax, :currency, :report_email, :report_time)";
+            $sql = "INSERT INTO company_profile (company_name, address, phone, email, logo, tax_percentage, currency_symbol, report_email, daily_report_time, timezone) VALUES (:name, :address, :phone, :email, :logo, :tax, :currency, :report_email, :report_time, :timezone)";
             $stmt = $pdo->prepare($sql);
-            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time]);
+            $res = $stmt->execute(['name' => $company_name, 'address' => $address, 'phone' => $phone, 'email' => $email, 'logo' => $logo_path, 'tax' => $tax_percentage, 'currency' => $currency_symbol, 'report_email' => $report_email, 'report_time' => $daily_report_time, 'timezone' => $timezone]);
         }
         
         if($res) {
@@ -149,6 +150,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <label class="form-label">Daily Reporting Time</label>
                                         <input type="time" name="daily_report_time" class="form-control" value="<?php echo htmlspecialchars($company['daily_report_time'] ?? '18:00'); ?>">
                                         <small class="text-muted">When the daily summary should be generated.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- System Configuration (Timezone) -->
+                            <h5 class="mt-4 border-bottom pb-2 text-warning"><i class="fas fa-globe me-2"></i> System Configuration</h5>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">System Timezone</label>
+                                        <select name="timezone" class="form-select" required>
+                                            <?php 
+                                            $timezones = timezone_identifiers_list();
+                                            $current_tz = $company['timezone'] ?? 'Asia/Colombo';
+                                            foreach($timezones as $tz) {
+                                                $selected = ($tz == $current_tz) ? 'selected' : '';
+                                                echo "<option value=\"$tz\" $selected>$tz</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                        <small class="text-muted">Used for correct automated reporting execution across regions.</small>
                                     </div>
                                 </div>
                             </div>

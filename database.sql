@@ -47,7 +47,8 @@ CREATE TABLE `company_profile` (
   `currency_symbol` varchar(10) DEFAULT '$',
   `tax_percentage` decimal(5,2) DEFAULT 0.00,
   `report_email` varchar(100) DEFAULT NULL,
-  `daily_report_time` time DEFAULT '18:00:00'
+  `daily_report_time` time DEFAULT '18:00:00',
+  `timezone` varchar(100) DEFAULT 'Asia/Colombo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
