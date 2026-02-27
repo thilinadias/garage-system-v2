@@ -4,13 +4,16 @@ Professional garage management solution with advanced tracking, reporting, and b
 
 ---
 
-## ✨ Version 3.2 Major Update (Current)
-- **Email Notifications**: Integrated PHPMailer to automatically dispatch emails to customers upon profile creation, booking scheduling, and service completion.
-- **Dynamic Email GUI**: Admins can configure SMTP credentials, upload custom email header logos, and edit all automated HTML email templates directly from the web settings panel.
-- **Automated Reporting Engine**: A new cron-ready reporting script automatically calculates Daily Revenue/Jobs and active Technician allocations, along with a Monthly Sales summary, emailing them directly to the admin.
-- **Premium UI Redesign**: Modernized the Bootstrap 5 interface with a new custom color palette, smooth shadows, rounded input corners, and richer Dark Mode colors.
-- **Fixed Layout Footer**: The structural layout has been upgraded to a strict Flexbox Column, ensuring the footer stays permanently pinned to the bottom of the screen regardless of content height.
-- **Default Vehicle Seeding**: The core database script now comes pre-loaded with an extensive list of the most popular global vehicle brands (Toyota, Honda, Ford, etc.) and models for immediate use on fresh installs.
+## ✨ Version 3.3 Major Update (Current)
+- **Service Catalog & Offers**: A new "Services" module has been introduced where admins can define general services (e.g., Oil Change, Wheel Balancing) alongside customizable Promotional Offers (Percentage or Fixed Discounts) that apply automatically on checkout.
+- **Promotional Email Broadcasting**: Added a mass-email capability allowing admins to broadcast newly created service offers simultaneously to all registered garage customers with a single click.
+- **Job Card Photos**: Technicians can now securely upload unlimited diagnostic or repair photos directly into an active Job Card.
+- **Vehicle Photo History**: Introduced a dynamic gallery inside Job Cards that automatically pulls and displays all historical photos linked to any past jobs for the same vehicle, providing an instant visual diagnostic timeline.
+- **Security Lockdowns**: Hardened role-based access controls by fully restricting the Bookings module strictly to Administrators, ensuring Technicians focus solely on active jobs.
+
+---
+
+## ✨ Version 3.2 Major Update
 
 
 ## ✨ Version 3.1 Major Update (Current)
