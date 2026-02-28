@@ -83,6 +83,27 @@ INSERT INTO `email_settings` (`id`) VALUES (1);
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `whatsapp_settings`
+--
+
+CREATE TABLE `whatsapp_settings` (
+  `id` int(11) NOT NULL,
+  `api_url` varchar(255) NOT NULL DEFAULT 'https://graph.facebook.com/v19.0/',
+  `phone_number_id` varchar(50) DEFAULT NULL,
+  `access_token` text DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `whatsapp_settings`
+--
+
+INSERT INTO `whatsapp_settings` (`id`, `api_url`, `phone_number_id`, `access_token`, `is_active`) VALUES
+(1, 'https://graph.facebook.com/v19.0/', NULL, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `vehicle_brands`
 --
 
@@ -335,6 +356,12 @@ ALTER TABLE `email_settings`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `whatsapp_settings`
+--
+ALTER TABLE `whatsapp_settings`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `vehicle_brands`
 --
 ALTER TABLE `vehicle_brands`
@@ -457,6 +484,9 @@ ALTER TABLE `company_profile`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `email_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+ALTER TABLE `whatsapp_settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 ALTER TABLE `vehicle_brands`

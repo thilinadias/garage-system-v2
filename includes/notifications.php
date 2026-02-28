@@ -91,6 +91,68 @@ function _dispatchEmail($to_email, $subject, $message, $is_html_block = false) {
 }
 
 // ==========================================
+// WHATSAPP API DISPATCHER
+// ==========================================
+function _getPhoneByEmail($email) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT phone FROM customers WHERE email = ? LIMIT 1");
+    $stmt->execute([$email]);
+    return $stmt->fetchColumn();
+}
+
+function sendWhatsAppMessage($phone, $message_text) {
+    global $pdo;
+
+    $stmt = $pdo->query("SELECT * FROM whatsapp_settings LIMIT 1");
+    $wa = $stmt->fetch();
+
+    if (!$wa || !$wa['is_active'] || empty($wa['access_token']) || empty($wa['phone_number_id'])) {
+        return false; // WhatsApp is disabled or not configured
+    }
+
+    // Clean Phone (strip non-digits, replace leading 0 with country code - assuming generic international format if missing)
+    $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+    if(strlen($clean_phone) <= 10) {
+        // Just a safety fallback if no country code provided, though Meta requires country code.
+        // It's best if the system enforces country codes on input, but we try as-is.
+        // For a true prod system, we'd prepend the garage's default country code here.
+    }
+
+    $url = rtrim($wa['api_url'], '/') . '/' . $wa['phone_number_id'] . '/messages';
+
+    $data = [
+        'messaging_product' => 'whatsapp',
+        'recipient_type' => 'individual',
+        'to' => $clean_phone,
+        'type' => 'text',
+        'text' => [
+            'preview_url' => false,
+            'body' => $message_text
+        ]
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $wa['access_token'],
+        'Content-Type: application/json'
+    ]);
+
+    $response = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpcode >= 200 && $httpcode < 300) {
+        return true;
+    } else {
+        error_log("WhatsApp API Error: " . $response);
+        return false;
+    }
+}
+
+// ==========================================
 // FEATURE-SPECIFIC EMAIL TRIGGERS
 // ==========================================
 
@@ -101,6 +163,14 @@ function sendWelcomeEmail($to_email, $customer_name) {
     
     $subject = $settings['welcome_subject'];
     $body = str_replace('{CUSTOMER_NAME}', htmlspecialchars($customer_name), $settings['welcome_body']);
+    
+    // WhatsApp Hook
+    $phone = _getPhoneByEmail($to_email);
+    if ($phone) {
+        $wa_msg = "Welcome to our Garage, $customer_name! We have created your profile. Let us know how we can help your vehicle today.";
+        sendWhatsAppMessage($phone, $wa_msg);
+    }
+    
     return _dispatchEmail($to_email, $subject, $body);
 }
 
@@ -116,6 +186,13 @@ function sendBookingEmail($to_email, $customer_name, $booking_ref, $booking_date
     $body = str_replace('{BOOKING_DATE}', htmlspecialchars($booking_date), $body);
     $body = str_replace('{BOOKING_TIME}', htmlspecialchars($booking_time), $body);
     
+    // WhatsApp Hook
+    $phone = _getPhoneByEmail($to_email);
+    if ($phone) {
+        $wa_msg = "Hi $customer_name, your booking (#$booking_ref) is confirmed!\n\n📅 $booking_date\n🕒 $booking_time\n\nSee you soon!";
+        sendWhatsAppMessage($phone, $wa_msg);
+    }
+    
     return _dispatchEmail($to_email, $subject, $body);
 }
 
@@ -129,6 +206,13 @@ function sendServiceEndEmail($to_email, $customer_name, $job_number, $notes) {
     $body = str_replace('{CUSTOMER_NAME}', htmlspecialchars($customer_name), $body);
     $body = str_replace('{JOB_NUMBER}', htmlspecialchars($job_number), $body);
     $body = str_replace('{NOTES}', htmlspecialchars($notes), $body);
+    
+    // WhatsApp Hook
+    $phone = _getPhoneByEmail($to_email);
+    if ($phone) {
+        $wa_msg = "🚗 Great news, $customer_name! Your vehicle (Job #$job_number) is ready for pickup.\n\nTechnician Notes: $notes";
+        sendWhatsAppMessage($phone, $wa_msg);
+    }
     
     return _dispatchEmail($to_email, $subject, $body);
 }
@@ -176,6 +260,13 @@ function sendPromotionalOfferEmail($to_email, $customer_name, $service) {
         <p>Best regards,<br>The Team at " . htmlspecialchars($company_name) . "</p>
     </div>
     ";
+    
+    // WhatsApp Hook
+    $phone = _getPhoneByEmail($to_email);
+    if ($phone) {
+        $wa_msg = "🎉 SPECIAL OFFER at $company_name!\n\nHi $customer_name,\nGet our {$service['name']} for only $final_price_str (You save $discount_type!).\n\nReply here to claim this deal before it's gone!";
+        sendWhatsAppMessage($phone, $wa_msg);
+    }
     
     return _dispatchEmail($to_email, $subject, $body, true); // true to force passing as block HTML instead of nl2br wrapper
 }

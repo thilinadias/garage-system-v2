@@ -25,6 +25,19 @@ checkRole(['admin']);
         </div>
     </div>
 
+    <!-- WhatsApp Configuration -->
+    <div class="col-md-6 mt-4">
+        <div class="card mb-4 h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fab fa-whatsapp me-2"></i> WhatsApp Integration</h5>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="text-muted flex-grow-1">Connect your Meta App to automatically fire SMS/WhatsApp alerts for Booking Confirmations, Vehicle Drop-offs, and Special Promo Blasts!</p>
+                <a href="whatsapp.php" class="btn btn-success"><i class="fab fa-whatsapp me-2"></i> Manage WhatsApp API</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Database Backup -->
     <div class="col-md-6">
         <div class="card mb-4 h-100">
